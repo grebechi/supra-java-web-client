@@ -4,12 +4,40 @@ import api from '../services/api';
 
 function OrcamentosPage() {
   const [orcamentos, setOrcamentos] = useState([]);
+  const [pagina, setPagina] = useState(0);
+  const [totalPaginas, setTotalPaginas] = useState(1);
+  const [busca, setBusca] = useState('');
+  const [carregando, setCarregando] = useState(false);
+
+  const carregarOrcamentos = async (paginaParaBuscar = pagina) => {
+    setCarregando(true);
+    try {
+      const res = await api.get('/orcamentos', {
+        params: {
+          page: paginaParaBuscar,
+          size: 3,
+          busca: busca.trim()
+        }
+      });
+      setOrcamentos(res.data.content);
+      setTotalPaginas(res.data.totalPages);
+      setPagina(paginaParaBuscar);
+    } catch (err) {
+      console.error('Erro ao carregar orçamentos:', err);
+    }
+    setCarregando(false);
+  };
 
   useEffect(() => {
-    api.get('/orcamentos')
-      .then(res => setOrcamentos(res.data))
-      .catch(err => console.error(err));
+    carregarOrcamentos();
   }, []);
+
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      carregarOrcamentos(0);
+    }, 500);
+    return () => clearTimeout(delayDebounce);
+  }, [busca]);
 
   const formatarData = (dataISO) =>
     new Date(dataISO).toLocaleDateString('pt-BR');
@@ -32,8 +60,17 @@ function OrcamentosPage() {
         </Link>
       </div>
 
-      {orcamentos.length === 0 ? (
-        <p className="text-gray-500">Nenhum orçamento cadastrado ainda.</p>
+      <input
+        value={busca}
+        onChange={e => setBusca(e.target.value)}
+        placeholder="Buscar orçamentos por nome ou observação"
+        className="border p-2 w-full mb-4"
+      />
+
+      {carregando ? (
+        <p className="text-gray-500">Carregando orçamentos...</p>
+      ) : orcamentos.length === 0 ? (
+        <p className="text-gray-500">Nenhum orçamento encontrado.</p>
       ) : (
         <div className="space-y-4">
           {orcamentos.map((orc) => (
@@ -52,8 +89,7 @@ function OrcamentosPage() {
                 {orc.itens?.map((item) => (
                   <li key={item.id} className="py-2 text-sm flex justify-between">
                     <span>
-                      {item.produto?.nome} ({item.produto?.unidadeMedida?.sigla})
-                      <br />
+                      {item.produto?.nome} ({item.produto?.unidadeMedida?.sigla})<br />
                       <Link
                         to={`/melhor-oferta/${item.produto?.id}`}
                         className="text-blue-600 hover:underline text-xs mt-1 inline-block"
@@ -62,19 +98,38 @@ function OrcamentosPage() {
                       </Link>
                     </span>
                     <span>
-                      {item.quantidade} × {formatarMoeda(item.precoUnitario)} ={" "}
-                      <strong>{formatarMoeda(item.valorTotal)}</strong>
+                      {item.quantidade} × {formatarMoeda(item.precoUnitario)} = <strong>{formatarMoeda(item.valorTotal)}</strong>
                     </span>
                   </li>
                 ))}
               </ul>
 
               <div className="mt-3 flex gap-3">
-                <Link to={`/orcamentos/${orc.id}`}className="text-sm text-blue-600 hover:underline"> Ver detalhes</Link>
+                <Link to={`/orcamentos/${orc.id}`} className="text-sm text-blue-600 hover:underline">Ver detalhes</Link>
                 <button className="text-sm text-red-600 hover:underline">Excluir</button>
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {orcamentos.length > 0 && (
+        <div className="mt-4 flex gap-4 justify-center items-center">
+          <button
+            onClick={() => carregarOrcamentos(pagina - 1)}
+            disabled={pagina <= 0}
+            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+          >
+            Página anterior
+          </button>
+          <span className="text-sm">Página {pagina + 1} de {totalPaginas}</span>
+          <button
+            onClick={() => carregarOrcamentos(pagina + 1)}
+            disabled={pagina + 1 >= totalPaginas}
+            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+          >
+            Próxima página
+          </button>
         </div>
       )}
     </div>
