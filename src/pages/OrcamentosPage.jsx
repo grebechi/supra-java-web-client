@@ -55,8 +55,8 @@ function OrcamentosPage() {
                       {item.produto?.nome} ({item.produto?.unidadeMedida?.sigla})
                       <br />
                       <Link
-                        to={`/melhores-ofertas/${item.produto?.id}`}
-                        className="text-blue-600 hover:underline text-xs"
+                        to={`/melhor-oferta/${item.produto?.id}`}
+                        className="text-blue-600 hover:underline text-xs mt-1 inline-block"
                       >
                         Ver melhor oferta
                       </Link>

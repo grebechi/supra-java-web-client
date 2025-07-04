@@ -16,7 +16,7 @@ function App() {
         <Route path="/" element={<ProdutosPage />} />
         <Route path="/orcamentos" element={<OrcamentosPage />} />
         <Route path="/orcamentos/novo" element={<NovoOrcamentoPage />} />
-        <Route path="/melhores-ofertas/:produtoId" element={<MelhorOfertaPage />} />
+        <Route path="/melhor-oferta/:produtoId?" element={<MelhorOfertaPage />} />
         <Route path="/orcamentos/:id" element={<OrcamentoDetalhesPage />} />
       </Routes>
     </BrowserRouter>
