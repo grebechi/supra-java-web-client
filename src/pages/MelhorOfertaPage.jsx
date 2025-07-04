@@ -10,8 +10,8 @@ function MelhorOfertaPage() {
   const [ofertas, setOfertas] = useState([]);
 
   useEffect(() => {
-    api.get("/produtos").then((res) => {
-      setProdutos(res.data);
+    api.get("/produtos", { params: { page: 0, size: 1000 } }).then((res) => {
+      setProdutos(res.data.content || []);
       if (produtoIdUrl) {
         setProdutoId(produtoIdUrl);
         buscarOfertas(produtoIdUrl);
@@ -97,7 +97,10 @@ function MelhorOfertaPage() {
               <tr>
                 <th className="p-2">Fornecedor</th>
                 <th className="p-2">Quantidade</th>
-                <th className="p-2">Preço por ({produtoSelecionado.unidadeMedida.sigla})</th>
+                <th className="p-2">
+                  Preço por (
+                  {produtoSelecionado?.unidadeMedida?.sigla || "unidade"})
+                </th>
                 <th className="p-2">Subtotal</th>
                 <th className="p-2">Data</th>
                 <th className="p-2">Observação</th>

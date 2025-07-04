@@ -2,7 +2,7 @@ function ItemListado({ item, onEditar, onExcluir }) {
     const sigla = item.produto?.unidadeMedida?.sigla;
   
     return (
-      <li className="p-3">
+      
         <div className="flex justify-between items-center">
           <div>
             <p className="font-medium">{item.produto?.nome} ({sigla})</p>
@@ -28,7 +28,7 @@ function ItemListado({ item, onEditar, onExcluir }) {
             <button onClick={() => onExcluir(item.id)} className="text-red-600 text-sm">Excluir</button>
           </div>
         </div>
-      </li>
+      
     );
   }
   

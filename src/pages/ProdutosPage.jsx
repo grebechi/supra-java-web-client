@@ -34,7 +34,7 @@ function ProdutosPage() {
 
   useEffect(() => {
     carregarProdutos(0);
-    api.get('/unidades').then(res => setUnidades(res.data));
+    api.get('/unidades').then(res => setUnidades(res.data.content || []));
   }, []);
 
   useEffect(() => {

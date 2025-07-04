@@ -10,7 +10,10 @@ function AdicionarItemForm({ orcamentoId, onItemAdicionado }) {
   const [quantidadeValida, setQuantidadeValida] = useState(true);
 
   useEffect(() => {
-    api.get("/produtos").then(res => setProdutos(res.data));
+    api.get("/produtos", { params: { page: 0, size: 1000 } }).then(res => {
+      setProdutos(res.data.content || []);
+    });
+
   }, []);
 
   const produtoSelecionado = produtos.find(p => p.id === parseInt(produtoId));
