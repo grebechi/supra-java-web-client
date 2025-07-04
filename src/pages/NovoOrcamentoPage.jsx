@@ -13,7 +13,8 @@ function NovoOrcamentoPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    api.get("/fornecedores").then((res) => setFornecedores(res.data));
+    api.get("/fornecedores", { params: { page: 0, size: 1000 } })
+    .then(res => setFornecedores(res.data.content || []));
   }, []);
 
   const criarOrcamento = async () => {

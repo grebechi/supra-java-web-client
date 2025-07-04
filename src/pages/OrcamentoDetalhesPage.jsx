@@ -20,9 +20,14 @@ function OrcamentoDetalhesPage() {
 
   useEffect(() => {
     api.get(`/orcamentos/${id}`).then(res => setOrcamento(res.data));
-    api.get("/fornecedores").then(res => setFornecedores(res.data));
-    api.get("/produtos").then(res => setProdutos(res.data));
+  
+    api.get("/fornecedores", { params: { page: 0, size: 1000 } })
+      .then(res => setFornecedores(res.data.content || []));
+  
+    api.get("/produtos", { params: { page: 0, size: 1000 } })
+      .then(res => setProdutos(res.data.content || []));
   }, [id]);
+  
 
   const handleUpdateOrcamento = async () => {
     try {
